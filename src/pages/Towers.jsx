@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
 
 const Towers = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
@@ -11,7 +10,7 @@ const Towers = () => {
   const [difficulty, setDifficulty] = useState('Easy');
   const [totalEarnings, setTotalEarnings] = useState(0);
 
-  const levels = 8;
+  const levels = 10;
 
   const handleStart = () => {
     if (bet > user.balance) {
@@ -65,75 +64,73 @@ const Towers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-darkBlue text-white flex">
-      <Sidebar />
-      <div className="flex-1">
-        <Header username={user.username} balance={user.balance} />
-        <div className="p-8 flex">
-          <div className="w-1/3 pr-4">
-            <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
-              <div className="mb-4">
-                <label className="block mb-2">Bet amount</label>
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    value={bet}
-                    onChange={(e) => setBet(Number(e.target.value))}
-                    className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
-                  />
-                  <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
-                  <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
-                  <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
-                </div>
+    <div className="min-h-screen bg-darkBlue text-white">
+      <Header username={user.username} balance={user.balance} />
+      <div className="p-8 flex">
+        <div className="w-1/3 pr-4">
+          <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
+            <div className="mb-4">
+              <label className="block mb-2">Bet amount</label>
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  value={bet}
+                  onChange={(e) => setBet(Number(e.target.value))}
+                  className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
+                />
+                <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
+                <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
+                <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
               </div>
-              <div className="mb-4">
-                <label className="block mb-2">Difficulty</label>
-                <div className="flex">
-                  <Button
-                    onClick={() => setDifficulty('Easy')}
-                    className={`mr-2 ${difficulty === 'Easy' ? 'bg-blue-500' : 'bg-gray-500'}`}
-                  >
-                    Easy
-                  </Button>
-                  <Button
-                    onClick={() => setDifficulty('Normal')}
-                    className={`mr-2 ${difficulty === 'Normal' ? 'bg-blue-500' : 'bg-gray-500'}`}
-                  >
-                    Normal
-                  </Button>
-                  <Button
-                    onClick={() => setDifficulty('Hard')}
-                    className={`${difficulty === 'Hard' ? 'bg-blue-500' : 'bg-gray-500'}`}
-                  >
-                    Hard
-                  </Button>
-                </div>
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2">Total earnings</label>
-                <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
-              </div>
-              <Button onClick={handleStart} className="w-full bg-blue-500">Start new game</Button>
             </div>
-          </div>
-          <div className="w-2/3">
-            <div className="bg-darkBlue-lighter rounded-lg p-6">
-              <div className="flex flex-col-reverse">
-                {Array(levels).fill(null).map((_, index) => (
-                  <div key={index} className="flex justify-center my-2">
-                    {index === currentLevel && !gameOver ? (
-                      <div className="flex">
-                        <Button onClick={() => handleClimb('left')} className="w-16 h-16 mr-2 bg-blue-500">Left</Button>
-                        <Button onClick={() => handleClimb('right')} className="w-16 h-16 bg-blue-500">Right</Button>
-                      </div>
-                    ) : (
-                      <div className={`w-36 h-16 ${index < currentLevel ? 'bg-green-500' : 'bg-gray-500'} flex items-center justify-center rounded-lg`}>
-                        {index === levels - 1 ? '🏆' : index < currentLevel ? '⭐' : index === currentLevel && gameOver ? '❌' : '🏰'}
-                      </div>
-                    )}
-                  </div>
-                ))}
+            <div className="mb-4">
+              <label className="block mb-2">Difficulty</label>
+              <div className="flex">
+                <Button
+                  onClick={() => setDifficulty('Easy')}
+                  className={`mr-2 ${difficulty === 'Easy' ? 'bg-blue-500' : 'bg-gray-500'}`}
+                >
+                  Easy
+                </Button>
+                <Button
+                  onClick={() => setDifficulty('Normal')}
+                  className={`mr-2 ${difficulty === 'Normal' ? 'bg-blue-500' : 'bg-gray-500'}`}
+                >
+                  Normal
+                </Button>
+                <Button
+                  onClick={() => setDifficulty('Hard')}
+                  className={`${difficulty === 'Hard' ? 'bg-blue-500' : 'bg-gray-500'}`}
+                >
+                  Hard
+                </Button>
               </div>
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">Total earnings</label>
+              <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
+            </div>
+            <Button onClick={handleStart} className="w-full bg-blue-500">Start new game</Button>
+          </div>
+        </div>
+        <div className="w-2/3">
+          <div className="bg-darkBlue-lighter rounded-lg p-6">
+            <div className="grid grid-cols-3 gap-4">
+              {Array(levels).fill(null).map((_, index) => (
+                <div key={index} className="bg-darkBlue-lighter p-4 rounded-lg text-center">
+                  <p className="text-2xl font-bold">{((levels - index) * 42.74).toFixed(2)}</p>
+                  {index === currentLevel && !gameOver ? (
+                    <div className="flex justify-center mt-2">
+                      <Button onClick={() => handleClimb('left')} className="mr-2">Left</Button>
+                      <Button onClick={() => handleClimb('right')}>Right</Button>
+                    </div>
+                  ) : (
+                    <div className={`mt-2 ${index < currentLevel ? 'text-green-500' : 'text-gray-500'}`}>
+                      {index < currentLevel ? '⭐' : index === currentLevel && gameOver ? '❌' : '🏰'}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>

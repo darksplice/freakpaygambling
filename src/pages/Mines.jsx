@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
 
 const Mines = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
@@ -80,69 +79,67 @@ const Mines = () => {
   const handleLoss = () => {
     setGameOver(true);
     setTotalEarnings(0);
+    handleStart(); // Reset the game immediately
   };
 
   return (
-    <div className="min-h-screen bg-darkBlue text-white flex">
-      <Sidebar />
-      <div className="flex-1">
-        <Header username={user.username} balance={user.balance} />
-        <div className="p-8 flex">
-          <div className="w-1/3 pr-4">
-            <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
-              <div className="mb-4">
-                <label className="block mb-2">Bet amount</label>
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    value={bet}
-                    onChange={(e) => setBet(Number(e.target.value))}
-                    className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
-                  />
-                  <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
-                  <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
-                  <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
-                </div>
+    <div className="min-h-screen bg-darkBlue text-white">
+      <Header username={user.username} balance={user.balance} />
+      <div className="p-8 flex">
+        <div className="w-1/3 pr-4">
+          <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
+            <div className="mb-4">
+              <label className="block mb-2">Bet amount</label>
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  value={bet}
+                  onChange={(e) => setBet(Number(e.target.value))}
+                  className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
+                />
+                <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
+                <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
+                <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
               </div>
-              <div className="mb-4">
-                <label className="block mb-2">Mines</label>
-                <div className="flex flex-wrap">
-                  {[1, 3, 5, 10, 15, 20].map(count => (
-                    <Button
-                      key={count}
-                      onClick={() => setMineCount(count)}
-                      className={`mr-2 mb-2 ${mineCount === count ? 'bg-blue-500' : 'bg-gray-500'}`}
-                    >
-                      {count}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2">Total earnings</label>
-                <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
-              </div>
-              <Button onClick={handleStart} className="w-full bg-blue-500">Start new game</Button>
             </div>
-          </div>
-          <div className="w-2/3">
-            <div className="bg-darkBlue-lighter rounded-lg p-6">
-              <div className="grid grid-cols-5 gap-2">
-                {grid.map((cell, index) => (
+            <div className="mb-4">
+              <label className="block mb-2">Mines</label>
+              <div className="flex flex-wrap">
+                {[1, 3, 5, 10, 15, 20].map(count => (
                   <Button
-                    key={index}
-                    onClick={() => handleReveal(index)}
-                    disabled={gameOver || cell === 'revealed' || cell === 'revealed-mine'}
-                    className={`w-16 h-16 ${
-                      cell === 'revealed' ? 'bg-green-500' : 
-                      cell === 'revealed-mine' ? 'bg-red-500' : 
-                      'bg-blue-300'
-                    }`}
+                    key={count}
+                    onClick={() => setMineCount(count)}
+                    className={`mr-2 mb-2 ${mineCount === count ? 'bg-blue-500' : 'bg-gray-500'}`}
                   >
-                    {cell === 'revealed' ? '👅' : cell === 'revealed-mine' ? '💥' : ''}
+                    {count}
                   </Button>
                 ))}
               </div>
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">Total earnings</label>
+              <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
+            </div>
+            <Button onClick={handleStart} className="w-full bg-blue-500">Start new game</Button>
+          </div>
+        </div>
+        <div className="w-2/3">
+          <div className="bg-darkBlue-lighter rounded-lg p-6">
+            <div className="grid grid-cols-5 gap-2">
+              {grid.map((cell, index) => (
+                <Button
+                  key={index}
+                  onClick={() => handleReveal(index)}
+                  disabled={gameOver || cell === 'revealed' || cell === 'revealed-mine'}
+                  className={`w-16 h-16 ${
+                    cell === 'revealed' ? 'bg-green-500' : 
+                    cell === 'revealed-mine' ? 'bg-red-500' : 
+                    'bg-blue-300'
+                  }`}
+                >
+                  {cell === 'revealed' ? '👅' : cell === 'revealed-mine' ? '💥' : ''}
+                </Button>
+              ))}
             </div>
           </div>
         </div>

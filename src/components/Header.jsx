@@ -23,7 +23,7 @@ const Header = ({ username, balance }) => {
         <span className="text-green-400 mr-4">
           ${typeof balance === 'number' ? balance.toFixed(2) : '0.00'} FreakPay
         </span>
-        <Button onClick={handleLogout} variant="outline">Logout</Button>
+        <Button onClick={handleLogout} variant="destructive">Logout</Button>
       </div>
     </header>
   );

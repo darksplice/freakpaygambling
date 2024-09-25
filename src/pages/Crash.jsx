@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
 import LeaderboardItem from '../components/LeaderboardItem';
 
 const Crash = () => {
@@ -13,16 +12,29 @@ const Crash = () => {
   const [autoCashout, setAutoCashout] = useState(null);
   const [totalEarnings, setTotalEarnings] = useState(0);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [joinTimer, setJoinTimer] = useState(10);
+  const [gameState, setGameState] = useState('waiting'); // 'waiting', 'joining', 'playing', 'crashed'
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    let crashInterval;
-    if (isPlaying) {
-      crashInterval = setInterval(() => {
+    let interval;
+    if (gameState === 'joining') {
+      interval = setInterval(() => {
+        setJoinTimer(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setGameState('playing');
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } else if (gameState === 'playing') {
+      interval = setInterval(() => {
         if (Math.random() < 0.02) {
           setIsCrashed(true);
-          setIsPlaying(false);
-          clearInterval(crashInterval);
+          setGameState('crashed');
+          clearInterval(interval);
           updateLeaderboard();
         } else {
           setMultiplier(prev => {
@@ -36,8 +48,8 @@ const Crash = () => {
       }, 50);
     }
 
-    return () => clearInterval(crashInterval);
-  }, [isPlaying, autoCashout]);
+    return () => clearInterval(interval);
+  }, [gameState, autoCashout]);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -79,18 +91,18 @@ const Crash = () => {
         ctx.lineTo(x, y);
         ctx.stroke();
 
-        if (isCrashed) {
+        if (gameState === 'crashed') {
           ctx.font = '48px Arial';
           ctx.fillStyle = 'red';
           ctx.fillText('💥 BOOM!', canvas.width / 2 - 100, canvas.height / 2);
-        } else if (!isPlaying) {
+        } else if (gameState !== 'playing') {
           requestAnimationFrame(drawRocket);
         }
       };
 
       drawRocket();
     }
-  }, [multiplier, isCrashed, isPlaying]);
+  }, [multiplier, gameState]);
 
   const handleBet = () => {
     if (bet > user.balance) {
@@ -102,14 +114,16 @@ const Crash = () => {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       return updatedUser;
     });
-    setIsPlaying(true);
+    setGameState('joining');
+    setJoinTimer(10);
     setIsCrashed(false);
     setMultiplier(1);
     setTotalEarnings(0);
+    setLeaderboard([]);
   };
 
   const handleCashOut = () => {
-    if (isCrashed) return;
+    if (gameState !== 'playing') return;
     const winnings = bet * multiplier;
     setUser(prev => {
       const updatedUser = { ...prev, balance: prev.balance + winnings };
@@ -117,7 +131,7 @@ const Crash = () => {
       return updatedUser;
     });
     setTotalEarnings(winnings);
-    setIsPlaying(false);
+    setGameState('waiting');
     updateLeaderboard();
   };
 
@@ -127,70 +141,66 @@ const Crash = () => {
   };
 
   return (
-    <div className="min-h-screen bg-darkBlue text-white flex">
-      <Sidebar />
-      <div className="flex-1">
-        <Header username={user.username} balance={user.balance} />
-        <div className="p-8 flex">
-          <div className="w-1/3 pr-4">
-            <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
-              <div className="mb-4">
-                <label className="block mb-2">Bet amount</label>
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    value={bet}
-                    onChange={(e) => setBet(Number(e.target.value))}
-                    className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
-                  />
-                  <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
-                  <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
-                  <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
-                </div>
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2">Auto cashout (multiplier)</label>
+    <div className="min-h-screen bg-darkBlue text-white">
+      <Header username={user.username} balance={user.balance} />
+      <div className="p-8 flex">
+        <div className="w-1/3 pr-4">
+          <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
+            <div className="mb-4">
+              <label className="block mb-2">Bet amount</label>
+              <div className="flex items-center">
                 <input
                   type="number"
-                  value={autoCashout || ''}
-                  onChange={(e) => setAutoCashout(Number(e.target.value) || null)}
-                  className="bg-darkBlue text-white p-2 rounded w-full"
-                  placeholder="Disable"
+                  value={bet}
+                  onChange={(e) => setBet(Number(e.target.value))}
+                  className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
                 />
+                <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
+                <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
+                <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
               </div>
-              <div className="mb-4">
-                <label className="block mb-2">Total earnings</label>
-                <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
-              </div>
-              <Button onClick={handleBet} disabled={isPlaying} className="w-full bg-blue-500 mb-2">
-                {isPlaying ? 'In Game' : 'Place Bet'}
-              </Button>
-              <Button onClick={handleCashOut} disabled={!isPlaying || isCrashed} className="w-full bg-green-500">
-                Cash Out
-              </Button>
             </div>
-            <div className="bg-darkBlue-lighter rounded-lg p-6">
-              <h2 className="text-xl font-bold mb-4">Leaderboard</h2>
-              {leaderboard.map((entry, index) => (
-                
-                <LeaderboardItem key={index} {...entry} />
+            <div className="mb-4">
+              <label className="block mb-2">Auto cashout (multiplier)</label>
+              <input
+                type="number"
+                value={autoCashout || ''}
+                onChange={(e) => setAutoCashout(Number(e.target.value) || null)}
+                className="bg-darkBlue text-white p-2 rounded w-full"
+                placeholder="Disable"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">Total earnings</label>
+              <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
+            </div>
+            <Button onClick={handleBet} disabled={gameState !== 'waiting'} className="w-full bg-blue-500 mb-2">
+              {gameState === 'joining' ? `Joining in ${joinTimer}s` : 'Place Bet'}
+            </Button>
+            <Button onClick={handleCashOut} disabled={gameState !== 'playing'} className="w-full bg-green-500">
+              Cash Out
+            </Button>
+          </div>
+          <div className="bg-darkBlue-lighter rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-4">Leaderboard</h2>
+            {leaderboard.map((entry, index) => (
+              <LeaderboardItem key={index} {...entry} />
+            ))}
+          </div>
+        </div>
+        <div className="w-2/3">
+          <div className="bg-darkBlue-lighter rounded-lg p-6">
+            <canvas ref={canvasRef} width={600} height={400} className="w-full h-64 mb-4" />
+            <div className="flex justify-between">
+              {[1.23, 1.46, 2.01, 2.2, 3.61, 4.78, 5.93].map((mult, index) => (
+                <div key={index} className={`px-3 py-1 rounded ${mult > 3 ? 'bg-yellow-500' : 'bg-blue-500'}`}>
+                  {mult.toFixed(2)}x
+                </div>
               ))}
             </div>
-          </div>
-          <div className="w-2/3">
-            <div className="bg-darkBlue-lighter rounded-lg p-6">
-              <canvas ref={canvasRef} width={600} height={400} className="w-full h-64 mb-4" />
-              <div className="flex justify-between">
-                {[1.23, 1.46, 2.01, 2.2, 3.61, 4.78, 5.93].map((mult, index) => (
-                  <div key={index} className={`px-3 py-1 rounded ${mult > 3 ? 'bg-yellow-500' : 'bg-blue-500'}`}>
-                    {mult.toFixed(2)}x
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 text-center">
-                <h2 className="text-4xl font-bold mb-2">{multiplier.toFixed(2)}x</h2>
-                <p>Current payout</p>
-              </div>
+            <div className="mt-4 text-center">
+              <h2 className="text-4xl font-bold mb-2">{multiplier.toFixed(2)}x</h2>
+              <p>Current payout</p>
             </div>
           </div>
         </div>
