@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import Header from '../components/Header';
+import ChatBox from '../components/ChatBox';
 
 const Towers = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [bet, setBet] = useState(30);
   const [currentLevel, setCurrentLevel] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  const [difficulty, setDifficulty] = useState('Easy');
+  const [difficulty, setDifficulty] = useState('Normal');
   const [totalEarnings, setTotalEarnings] = useState(0);
   const [towerState, setTowerState] = useState(Array(10).fill().map(() => Array(3).fill('default')));
 
@@ -32,7 +33,7 @@ const Towers = () => {
   const handleClimb = (level, choice) => {
     if (gameOver || level !== currentLevel) return;
 
-    const successRate = difficulty === 'Easy' ? 0.7 : difficulty === 'Normal' ? 0.5 : 0.3;
+    const successRate = 0.487; // 48.7% win rate
     const isSuccess = Math.random() < successRate;
 
     const newTowerState = [...towerState];
@@ -95,29 +96,6 @@ const Towers = () => {
                 </div>
               </div>
               <div className="mb-4">
-                <label className="block mb-2">Difficulty</label>
-                <div className="flex">
-                  <Button
-                    onClick={() => setDifficulty('Easy')}
-                    className={`mr-2 ${difficulty === 'Easy' ? 'bg-blue-500' : 'bg-gray-500'}`}
-                  >
-                    Easy
-                  </Button>
-                  <Button
-                    onClick={() => setDifficulty('Normal')}
-                    className={`mr-2 ${difficulty === 'Normal' ? 'bg-blue-500' : 'bg-gray-500'}`}
-                  >
-                    Normal
-                  </Button>
-                  <Button
-                    onClick={() => setDifficulty('Hard')}
-                    className={`${difficulty === 'Hard' ? 'bg-blue-500' : 'bg-gray-500'}`}
-                  >
-                    Hard
-                  </Button>
-                </div>
-              </div>
-              <div className="mb-4">
                 <label className="block mb-2">Total earnings</label>
                 <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
               </div>
@@ -153,6 +131,13 @@ const Towers = () => {
           </div>
         </div>
       </div>
+      <ChatBox />
+      <footer className="fixed bottom-0 left-0 right-0 bg-darkBlue-lighter p-4 text-center">
+        <p className="text-white">
+          Made by @darksplice on Discord - have fun freaky gambling 
+          <img src="/discord-icon.svg" alt="Discord" className="inline-block ml-2 w-6 h-6" />
+        </p>
+      </footer>
     </div>
   );
 };

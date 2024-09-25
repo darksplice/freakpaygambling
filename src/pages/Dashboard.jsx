@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
+import ChatBox from '../components/ChatBox';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -42,7 +42,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-darkBlue flex">
-      <Sidebar />
       <div className="flex-1">
         <Header username={user.username} balance={user.balance} />
         <div className="p-8">
@@ -58,6 +57,13 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <ChatBox />
+      <footer className="fixed bottom-0 left-0 right-0 bg-darkBlue-lighter p-4 text-center">
+        <p className="text-white">
+          Made by @darksplice on Discord - have fun freaky gambling 
+          <img src="/discord-icon.svg" alt="Discord" className="inline-block ml-2 w-6 h-6" />
+        </p>
+      </footer>
     </div>
   );
 };

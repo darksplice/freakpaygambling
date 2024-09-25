@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import Header from '../components/Header';
+import ChatBox from '../components/ChatBox';
 
 const Mines = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
@@ -131,7 +132,7 @@ const Mines = () => {
           </div>
           <div className="w-2/3">
             <div className="bg-darkBlue-lighter rounded-lg p-6">
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-5 gap-1">
                 {grid.map((cell, index) => (
                   <Button
                     key={index}
@@ -151,6 +152,13 @@ const Mines = () => {
           </div>
         </div>
       </div>
+      <ChatBox />
+      <footer className="fixed bottom-0 left-0 right-0 bg-darkBlue-lighter p-4 text-center">
+        <p className="text-white">
+          Made by @darksplice on Discord - have fun freaky gambling 
+          <img src="/discord-icon.svg" alt="Discord" className="inline-block ml-2 w-6 h-6" />
+        </p>
+      </footer>
     </div>
   );
 };
