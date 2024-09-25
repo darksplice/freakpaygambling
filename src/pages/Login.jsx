@@ -21,9 +21,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">Login to FreakPay Casino</h1>
+    <div className="min-h-screen flex items-center justify-center bg-darkBlue">
+      <div className="bg-darkBlue-lighter p-8 rounded-lg shadow-md w-96">
+        <h1 className="text-2xl font-bold mb-6 text-center text-white">Login to FreakPay Casino</h1>
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <Input
@@ -32,6 +32,7 @@ const Login = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
+              className="bg-darkBlue text-white"
             />
           </div>
           <div className="mb-6">
@@ -41,12 +42,13 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="bg-darkBlue text-white"
             />
           </div>
-          <Button type="submit" className="w-full">Login</Button>
+          <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600">Login</Button>
         </form>
-        <p className="mt-4 text-center">
-          Don't have an account? <Link to="/signup" className="text-blue-500 hover:underline">Sign up</Link>
+        <p className="mt-4 text-center text-white">
+          Don't have an account? <Link to="/signup" className="text-blue-400 hover:underline">Sign up</Link>
         </p>
       </div>
     </div>

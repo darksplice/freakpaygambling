@@ -15,7 +15,7 @@ const Signup = () => {
       alert('Username already taken. Please choose a different one.');
       return;
     }
-    const newUser = { username, balance: 0 };
+    const newUser = { username, balance: 0, amountGambled: 0, accountCreated: new Date().toISOString(), lifetimeBalance: 0 };
     existingUsers.push(newUser);
     localStorage.setItem('users', JSON.stringify(existingUsers));
     localStorage.setItem('user', JSON.stringify(newUser));
@@ -23,9 +23,9 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">Sign Up for FreakPay Casino</h1>
+    <div className="min-h-screen flex items-center justify-center bg-darkBlue">
+      <div className="bg-darkBlue-lighter p-8 rounded-lg shadow-md w-96">
+        <h1 className="text-2xl font-bold mb-6 text-center text-white">Sign Up for FreakPay Casino</h1>
         <form onSubmit={handleSignup}>
           <div className="mb-4">
             <Input
@@ -34,6 +34,7 @@ const Signup = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
+              className="bg-darkBlue text-white"
             />
           </div>
           <div className="mb-6">
@@ -43,12 +44,13 @@ const Signup = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="bg-darkBlue text-white"
             />
           </div>
-          <Button type="submit" className="w-full">Sign Up</Button>
+          <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600">Sign Up</Button>
         </form>
-        <p className="mt-4 text-center">
-          Already have an account? <Link to="/login" className="text-blue-500 hover:underline">Login</Link>
+        <p className="mt-4 text-center text-white">
+          Already have an account? <Link to="/login" className="text-blue-400 hover:underline">Login</Link>
         </p>
       </div>
     </div>

@@ -9,6 +9,7 @@ const Towers = () => {
   const [currentLevel, setCurrentLevel] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState('Easy');
+  const [totalEarnings, setTotalEarnings] = useState(0);
 
   const levels = 8;
 
@@ -24,12 +25,15 @@ const Towers = () => {
     });
     setCurrentLevel(0);
     setGameOver(false);
+    setTotalEarnings(0);
   };
 
   const handleClimb = (choice) => {
     const successRate = difficulty === 'Easy' ? 0.7 : difficulty === 'Normal' ? 0.5 : 0.3;
     if (Math.random() < successRate) {
       setCurrentLevel(prev => prev + 1);
+      const newEarnings = calculateEarnings(currentLevel + 1);
+      setTotalEarnings(newEarnings);
       if (currentLevel + 1 === levels) {
         handleWin();
       }
@@ -38,10 +42,13 @@ const Towers = () => {
     }
   };
 
+  const calculateEarnings = (level) => {
+    return bet * (1 + (level * 0.5));
+  };
+
   const handleCashOut = () => {
-    const winnings = bet * (currentLevel + 1);
     setUser(prev => {
-      const updatedUser = { ...prev, balance: prev.balance + winnings };
+      const updatedUser = { ...prev, balance: prev.balance + totalEarnings };
       localStorage.setItem('user', JSON.stringify(updatedUser));
       return updatedUser;
     });
@@ -49,24 +56,19 @@ const Towers = () => {
   };
 
   const handleWin = () => {
-    const winnings = bet * levels;
-    setUser(prev => {
-      const updatedUser = { ...prev, balance: prev.balance + winnings };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      return updatedUser;
-    });
-    setGameOver(true);
+    handleCashOut();
   };
 
   const handleLoss = () => {
     setGameOver(true);
+    setTotalEarnings(0);
   };
 
   return (
     <div className="min-h-screen bg-darkBlue text-white flex">
       <Sidebar />
       <div className="flex-1">
-        <Header username={user.username} />
+        <Header username={user.username} balance={user.balance} />
         <div className="p-8 flex">
           <div className="w-1/3 pr-4">
             <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
@@ -107,14 +109,18 @@ const Towers = () => {
                   </Button>
                 </div>
               </div>
+              <div className="mb-4">
+                <label className="block mb-2">Total earnings</label>
+                <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
+              </div>
               <Button onClick={handleStart} className="w-full bg-blue-500">Start new game</Button>
             </div>
           </div>
           <div className="w-2/3">
             <div className="bg-darkBlue-lighter rounded-lg p-6">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="flex flex-col-reverse">
                 {Array(levels).fill(null).map((_, index) => (
-                  <div key={index} className="flex justify-center">
+                  <div key={index} className="flex justify-center my-2">
                     {index === currentLevel && !gameOver ? (
                       <div className="flex">
                         <Button onClick={() => handleClimb('left')} className="w-16 h-16 mr-2 bg-blue-500">Left</Button>
@@ -122,7 +128,7 @@ const Towers = () => {
                       </div>
                     ) : (
                       <div className={`w-36 h-16 ${index < currentLevel ? 'bg-green-500' : 'bg-gray-500'} flex items-center justify-center rounded-lg`}>
-                        {index < currentLevel ? '🏆' : '🏰'}
+                        {index === levels - 1 ? '🏆' : index < currentLevel ? '⭐' : index === currentLevel && gameOver ? '❌' : '🏰'}
                       </div>
                     )}
                   </div>

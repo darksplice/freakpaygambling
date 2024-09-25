@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { SettingsIcon } from 'lucide-react';
 
-const Header = ({ username }) => {
+const Header = ({ username, balance }) => {
   const handleLogout = () => {
     localStorage.removeItem('user');
     window.location.href = '/login';
@@ -20,6 +20,7 @@ const Header = ({ username }) => {
           <SettingsIcon size={24} />
         </Link>
         <span className="text-white mr-4">Welcome, {username}!</span>
+        <span className="text-green-400 mr-4">${balance.toFixed(2)} FreakPay</span>
         <Button onClick={handleLogout} variant="outline">Logout</Button>
       </div>
     </header>

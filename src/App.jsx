@@ -10,7 +10,6 @@ import Towers from "./pages/Towers";
 import Mines from "./pages/Mines";
 import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Sidebar from "./components/Sidebar";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +18,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
-        <div className="flex">
+        <div className="flex min-h-screen bg-darkBlue">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />

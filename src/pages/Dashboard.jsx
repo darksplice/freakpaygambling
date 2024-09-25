@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
 
@@ -16,7 +14,6 @@ const Dashboard = () => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
     if (storedUser) {
       setUser(storedUser);
-      // Load stats from localStorage
       const storedStats = JSON.parse(localStorage.getItem('userStats')) || {
         amountGambled: 0,
         accountCreated: new Date().toISOString(),
@@ -27,17 +24,16 @@ const Dashboard = () => {
 
     const balanceInterval = setInterval(() => {
       setUser(prevUser => {
-        const updatedUser = { ...prevUser, balance: prevUser.balance + 20 };
+        const updatedUser = { ...prevUser, balance: prevUser.balance + 25 };
         localStorage.setItem('user', JSON.stringify(updatedUser));
-        // Update lifetimeBalance in stats
         setStats(prevStats => {
-          const updatedStats = { ...prevStats, lifetimeBalance: prevStats.lifetimeBalance + 20 };
+          const updatedStats = { ...prevStats, lifetimeBalance: prevStats.lifetimeBalance + 25 };
           localStorage.setItem('userStats', JSON.stringify(updatedStats));
           return updatedStats;
         });
         return updatedUser;
       });
-    }, 60000); // 60000 ms = 1 minute
+    }, 15000); // 15000 ms = 15 seconds
 
     return () => clearInterval(balanceInterval);
   }, []);
@@ -48,7 +44,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-darkBlue flex">
       <Sidebar />
       <div className="flex-1">
-        <Header username={user.username} />
+        <Header username={user.username} balance={user.balance} />
         <div className="p-8">
           <div className="bg-darkBlue-lighter rounded-lg shadow-md p-6 mb-8">
             <h2 className="text-2xl font-semibold mb-4 text-white">Your Balance</h2>

@@ -45,7 +45,7 @@ const Mines = () => {
     if (gameOver || grid[index] !== 'safe') return;
 
     const newGrid = [...grid];
-    newGrid[index] = 'revealed';
+    newGrid[index] = grid[index] === 'mine' ? 'revealed-mine' : 'revealed';
     setGrid(newGrid);
     setRevealedCount(prev => prev + 1);
 
@@ -61,7 +61,6 @@ const Mines = () => {
   };
 
   const calculateEarnings = (revealed) => {
-    // This is a simple calculation, you might want to use a more complex formula
     return bet * (1 + (revealed * 0.1));
   };
 
@@ -80,13 +79,14 @@ const Mines = () => {
 
   const handleLoss = () => {
     setGameOver(true);
+    setTotalEarnings(0);
   };
 
   return (
     <div className="min-h-screen bg-darkBlue text-white flex">
       <Sidebar />
       <div className="flex-1">
-        <Header username={user.username} />
+        <Header username={user.username} balance={user.balance} />
         <div className="p-8 flex">
           <div className="w-1/3 pr-4">
             <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
@@ -132,10 +132,14 @@ const Mines = () => {
                   <Button
                     key={index}
                     onClick={() => handleReveal(index)}
-                    disabled={gameOver || cell === 'revealed'}
-                    className={`w-16 h-16 ${cell === 'revealed' ? 'bg-green-500' : 'bg-gray-500'}`}
+                    disabled={gameOver || cell === 'revealed' || cell === 'revealed-mine'}
+                    className={`w-16 h-16 ${
+                      cell === 'revealed' ? 'bg-green-500' : 
+                      cell === 'revealed-mine' ? 'bg-red-500' : 
+                      'bg-blue-300'
+                    }`}
                   >
-                    {cell === 'revealed' ? '⚓' : ''}
+                    {cell === 'revealed' ? '👅' : cell === 'revealed-mine' ? '💥' : ''}
                   </Button>
                 ))}
               </div>
