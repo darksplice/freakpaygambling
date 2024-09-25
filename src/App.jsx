@@ -6,9 +6,9 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Crash from "./pages/Crash";
-import Roulette from "./pages/Roulette";
 import Towers from "./pages/Towers";
 import Mines from "./pages/Mines";
+import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -23,9 +23,9 @@ const App = () => (
           <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
-          <Route path="/roulette" element={<ProtectedRoute><Roulette /></ProtectedRoute>} />
           <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
           <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

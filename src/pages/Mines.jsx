@@ -7,23 +7,9 @@ const Mines = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [bet, setBet] = useState(0);
   const [grid, setGrid] = useState(Array(25).fill(null));
+  const [mineCount, setMineCount] = useState(3);
   const [revealedCount, setRevealedCount] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  const [players, setPlayers] = useState([]);
-
-  const mineCount = 5;
-
-  useEffect(() => {
-    // Simulate other players
-    const playerInterval = setInterval(() => {
-      setPlayers(prev => [
-        ...prev,
-        { name: `Player${Math.floor(Math.random() * 1000)}`, bet: Math.floor(Math.random() * 1000), revealed: Math.floor(Math.random() * 20) }
-      ].slice(-10));
-    }, 2000);
-
-    return () => clearInterval(playerInterval);
-  }, []);
 
   const initializeGrid = () => {
     const newGrid = Array(25).fill('safe');
@@ -63,7 +49,7 @@ const Mines = () => {
 
     if (grid[index] === 'mine') {
       handleLoss();
-    } else if (revealedCount + 1 === 20) {
+    } else if (revealedCount + 1 === 25 - mineCount) {
       handleWin();
     }
   };
@@ -79,7 +65,7 @@ const Mines = () => {
   };
 
   const handleWin = () => {
-    const winnings = bet * 20;
+    const winnings = bet * (25 - mineCount);
     setUser(prev => {
       const updatedUser = { ...prev, balance: prev.balance + winnings };
       localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -98,16 +84,25 @@ const Mines = () => {
       <div className="max-w-4xl mx-auto p-8">
         <h1 className="text-4xl font-bold mb-8">Mines</h1>
         <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
-          <input
-            type="number"
-            value={bet}
-            onChange={(e) => setBet(Number(e.target.value))}
-            className="bg-darkBlue text-white p-2 rounded mr-2"
-            placeholder="Enter bet amount"
-          />
-          <Button onClick={handleStart} disabled={!gameOver}>Start Game</Button>
-        </div>
-        <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
+          <div className="flex mb-4">
+            <input
+              type="number"
+              value={bet}
+              onChange={(e) => setBet(Number(e.target.value))}
+              className="bg-darkBlue text-white p-2 rounded mr-2"
+              placeholder="Enter bet amount"
+            />
+            <select
+              value={mineCount}
+              onChange={(e) => setMineCount(Number(e.target.value))}
+              className="bg-darkBlue text-white p-2 rounded mr-2"
+            >
+              {[1, 3, 5, 10, 15, 20].map(count => (
+                <option key={count} value={count}>{count}</option>
+              ))}
+            </select>
+            <Button onClick={handleStart} disabled={!gameOver}>Start Game</Button>
+          </div>
           <div className="grid grid-cols-5 gap-2">
             {grid.map((cell, index) => (
               <Button
@@ -124,25 +119,6 @@ const Mines = () => {
         {!gameOver && (
           <Button onClick={handleCashOut} className="mb-4">Cash Out</Button>
         )}
-        {gameOver && (
-          <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
-            <h2 className="text-2xl mb-4">Game Over</h2>
-            <p>You revealed {revealedCount} safe tiles</p>
-            {revealedCount > 0 ? (
-              <p className="text-green-400">You won ${bet * revealedCount}!</p>
-            ) : (
-              <p className="text-red-400">You lost ${bet}.</p>
-            )}
-          </div>
-        )}
-        <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
-          <h2 className="text-2xl mb-4">Other Players</h2>
-          <ul>
-            {players.map((player, index) => (
-              <li key={index}>{player.name}: ${player.bet} with {player.revealed} revealed</li>
-            ))}
-          </ul>
-        </div>
         <Link to="/">
           <Button>Back to Dashboard</Button>
         </Link>
