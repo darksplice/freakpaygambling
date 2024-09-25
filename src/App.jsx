@@ -10,6 +10,7 @@ import Towers from "./pages/Towers";
 import Mines from "./pages/Mines";
 import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Sidebar from "./components/Sidebar";
 
 const queryClient = new QueryClient();
 
@@ -18,15 +19,17 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
-          <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
-          <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-        </Routes>
+        <div className="flex">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
+            <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
+            <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

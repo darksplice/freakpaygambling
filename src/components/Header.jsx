@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import { SettingsIcon } from 'lucide-react';
 
 const Header = ({ username }) => {
   const handleLogout = () => {
@@ -15,7 +16,9 @@ const Header = ({ username }) => {
         <h1 className="text-white text-xl font-bold">𝓯𝓻𝓮𝓪𝓴𝓮𝓭𝓖𝓪𝓶𝓫𝓵𝓮</h1>
       </Link>
       <div className="flex items-center">
-        <Link to="/settings" className="text-white mr-4 hover:underline">Settings</Link>
+        <Link to="/settings" className="text-white mr-4 hover:text-blue-400">
+          <SettingsIcon size={24} />
+        </Link>
         <span className="text-white mr-4">Welcome, {username}!</span>
         <Button onClick={handleLogout} variant="outline">Logout</Button>
       </div>

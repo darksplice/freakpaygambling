@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import Header from '../components/Header';
+import Sidebar from '../components/Sidebar';
 
 const Towers = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
-  const [bet, setBet] = useState(0);
+  const [bet, setBet] = useState(30);
   const [currentLevel, setCurrentLevel] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [difficulty, setDifficulty] = useState('Easy');
@@ -63,64 +63,73 @@ const Towers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-darkBlue text-white">
-      <Header username={user.username} />
-      <div className="flex">
-        <div className="w-1/4 bg-darkBlue-lighter p-4">
-          <Link to="/crash" className="block mb-4">
-            <Button className="w-full">🚀 Crash</Button>
-          </Link>
-          <Link to="/towers" className="block mb-4">
-            <Button className="w-full">🏰 Towers</Button>
-          </Link>
-          <Link to="/mines" className="block mb-4">
-            <Button className="w-full">🚢 Mines</Button>
-          </Link>
-        </div>
-        <div className="w-3/4 p-8">
-          <h1 className="text-4xl font-bold mb-8">Towers</h1>
-          <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
-            <div className="flex mb-4">
-              <input
-                type="number"
-                value={bet}
-                onChange={(e) => setBet(Number(e.target.value))}
-                className="bg-darkBlue text-white p-2 rounded mr-2"
-                placeholder="Enter bet amount"
-              />
-              <select
-                value={difficulty}
-                onChange={(e) => setDifficulty(e.target.value)}
-                className="bg-darkBlue text-white p-2 rounded mr-2"
-              >
-                <option value="Easy">Easy</option>
-                <option value="Normal">Normal</option>
-                <option value="Hard">Hard</option>
-              </select>
-              <Button onClick={handleStart} disabled={gameOver === false}>Start Game</Button>
+    <div className="min-h-screen bg-darkBlue text-white flex">
+      <Sidebar />
+      <div className="flex-1">
+        <Header username={user.username} />
+        <div className="p-8 flex">
+          <div className="w-1/3 pr-4">
+            <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
+              <div className="mb-4">
+                <label className="block mb-2">Bet amount</label>
+                <div className="flex items-center">
+                  <input
+                    type="number"
+                    value={bet}
+                    onChange={(e) => setBet(Number(e.target.value))}
+                    className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
+                  />
+                  <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
+                  <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
+                  <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block mb-2">Difficulty</label>
+                <div className="flex">
+                  <Button
+                    onClick={() => setDifficulty('Easy')}
+                    className={`mr-2 ${difficulty === 'Easy' ? 'bg-blue-500' : 'bg-gray-500'}`}
+                  >
+                    Easy
+                  </Button>
+                  <Button
+                    onClick={() => setDifficulty('Normal')}
+                    className={`mr-2 ${difficulty === 'Normal' ? 'bg-blue-500' : 'bg-gray-500'}`}
+                  >
+                    Normal
+                  </Button>
+                  <Button
+                    onClick={() => setDifficulty('Hard')}
+                    className={`${difficulty === 'Hard' ? 'bg-blue-500' : 'bg-gray-500'}`}
+                  >
+                    Hard
+                  </Button>
+                </div>
+              </div>
+              <Button onClick={handleStart} className="w-full bg-blue-500">Start new game</Button>
             </div>
-            {!gameOver && (
-              <div className="grid grid-cols-3 gap-2">
+          </div>
+          <div className="w-2/3">
+            <div className="bg-darkBlue-lighter rounded-lg p-6">
+              <div className="grid grid-cols-3 gap-4">
                 {Array(levels).fill(null).map((_, index) => (
                   <div key={index} className="flex justify-center">
-                    {index === currentLevel ? (
-                      <>
-                        <Button onClick={() => handleClimb('left')} className="w-16 h-16 mr-2">Left</Button>
-                        <Button onClick={() => handleClimb('right')} className="w-16 h-16">Right</Button>
-                      </>
+                    {index === currentLevel && !gameOver ? (
+                      <div className="flex">
+                        <Button onClick={() => handleClimb('left')} className="w-16 h-16 mr-2 bg-blue-500">Left</Button>
+                        <Button onClick={() => handleClimb('right')} className="w-16 h-16 bg-blue-500">Right</Button>
+                      </div>
                     ) : (
-                      <div className={`w-36 h-16 ${index < currentLevel ? 'bg-green-500' : 'bg-gray-500'} flex items-center justify-center`}>
+                      <div className={`w-36 h-16 ${index < currentLevel ? 'bg-green-500' : 'bg-gray-500'} flex items-center justify-center rounded-lg`}>
                         {index < currentLevel ? '🏆' : '🏰'}
                       </div>
                     )}
                   </div>
                 ))}
               </div>
-            )}
+            </div>
           </div>
-          {!gameOver && (
-            <Button onClick={handleCashOut} className="mb-4">Cash Out</Button>
-          )}
         </div>
       </div>
     </div>
