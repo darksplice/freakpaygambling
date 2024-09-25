@@ -19,8 +19,10 @@ const Header = ({ username, balance }) => {
         <Link to="/settings" className="text-white mr-4 hover:text-blue-400">
           <SettingsIcon size={24} />
         </Link>
-        <span className="text-white mr-4">Welcome, {username}!</span>
-        <span className="text-green-400 mr-4">${balance.toFixed(2)} FreakPay</span>
+        <span className="text-white mr-4">Welcome, {username || 'Guest'}!</span>
+        <span className="text-green-400 mr-4">
+          ${typeof balance === 'number' ? balance.toFixed(2) : '0.00'} FreakPay
+        </span>
         <Button onClick={handleLogout} variant="outline">Logout</Button>
       </div>
     </header>
