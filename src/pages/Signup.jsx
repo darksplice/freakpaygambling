@@ -10,9 +10,15 @@ const Signup = () => {
 
   const handleSignup = (e) => {
     e.preventDefault();
-    // Here you would typically send the signup data to a backend
-    // For this example, we'll just simulate a successful signup
-    localStorage.setItem('user', JSON.stringify({ username, balance: 0 }));
+    const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+    if (existingUsers.some(user => user.username === username)) {
+      alert('Username already taken. Please choose a different one.');
+      return;
+    }
+    const newUser = { username, balance: 0 };
+    existingUsers.push(newUser);
+    localStorage.setItem('users', JSON.stringify(existingUsers));
+    localStorage.setItem('user', JSON.stringify(newUser));
     navigate('/');
   };
 

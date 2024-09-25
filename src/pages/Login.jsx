@@ -10,10 +10,14 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Here you would typically validate the login with a backend
-    // For this example, we'll just simulate a successful login
-    localStorage.setItem('user', JSON.stringify({ username, balance: 0 }));
-    navigate('/');
+    const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const user = existingUsers.find(u => u.username === username);
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/');
+    } else {
+      alert('Invalid username or password');
+    }
   };
 
   return (

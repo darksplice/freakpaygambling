@@ -28,24 +28,23 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-darkBlue">
       <Header username={user.username} />
-      <div className="max-w-4xl mx-auto p-8">
-        <div className="bg-darkBlue-lighter rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-white">Your Balance</h2>
-          <p className="text-3xl font-bold text-green-400">${user.balance.toFixed(2)} FreakPay</p>
+      <div className="flex">
+        <div className="w-1/4 bg-darkBlue-lighter p-4">
+          <Link to="/crash" className="block mb-4">
+            <Button className="w-full">🚀 Crash</Button>
+          </Link>
+          <Link to="/towers" className="block mb-4">
+            <Button className="w-full">🏰 Towers</Button>
+          </Link>
+          <Link to="/mines" className="block mb-4">
+            <Button className="w-full">🚢 Mines</Button>
+          </Link>
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <Link to="/crash">
-            <Button className="w-full h-32 text-xl bg-blue-600 hover:bg-blue-700">Crash</Button>
-          </Link>
-          <Link to="/roulette">
-            <Button className="w-full h-32 text-xl bg-red-600 hover:bg-red-700">Roulette</Button>
-          </Link>
-          <Link to="/towers">
-            <Button className="w-full h-32 text-xl bg-purple-600 hover:bg-purple-700">Towers</Button>
-          </Link>
-          <Link to="/mines">
-            <Button className="w-full h-32 text-xl bg-green-600 hover:bg-green-700">Mines</Button>
-          </Link>
+        <div className="w-3/4 p-8">
+          <div className="bg-darkBlue-lighter rounded-lg shadow-md p-6 mb-8">
+            <h2 className="text-2xl font-semibold mb-4 text-white">Your Balance</h2>
+            <p className="text-3xl font-bold text-green-400">${user.balance.toFixed(2)} FreakPay</p>
+          </div>
         </div>
       </div>
     </div>
