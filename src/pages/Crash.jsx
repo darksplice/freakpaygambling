@@ -223,7 +223,6 @@ const Crash = () => {
           </div>
         </div>
       </div>
-      <ChatBox />
     </div>
   );
 };
