@@ -39,30 +39,24 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <BrowserRouter>
-          {user ? (
-            <div className="flex h-screen bg-[#1a1b2e]">
-              <Sidebar />
-              <div className="flex flex-col flex-1">
-                <Header user={user} />
-                <div className="flex-1 overflow-auto">
-                  <Routes>
-                    <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                    <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
-                    <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
-                    <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
-                    <Route path="/plinko" element={<ProtectedRoute><Plinko /></ProtectedRoute>} />
-                    <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                  </Routes>
-                </div>
+          <div className="flex h-screen bg-[#1a1b2e]">
+            {user && <Sidebar />}
+            <div className="flex flex-col flex-1">
+              <Header user={user} />
+              <div className="flex-1 overflow-auto">
+                <Routes>
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
+                  <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
+                  <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
+                  <Route path="/plinko" element={<ProtectedRoute><Plinko /></ProtectedRoute>} />
+                  <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                </Routes>
               </div>
             </div>
-          ) : (
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="*" element={<Login />} />
-            </Routes>
-          )}
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

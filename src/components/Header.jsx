@@ -19,13 +19,23 @@ const Header = ({ user }) => {
         <Link to="/settings" className="text-white mr-4 hover:text-blue-400">
           <SettingsIcon size={24} />
         </Link>
-        <span className="text-white mr-4">Welcome, {user.username}!</span>
-        <span className="text-green-400 mr-4">
-          ${typeof user.balance === 'number' ? user.balance.toFixed(2) : '0.00'} FreakPay
-        </span>
-        <Button onClick={handleLogout} variant="ghost" className="text-white hover:text-red-400">
-          <LogOutIcon size={24} />
-        </Button>
+        {user ? (
+          <>
+            <span className="text-white mr-4">Welcome, {user.username}!</span>
+            <span className="text-green-400 mr-4">
+              ${typeof user.balance === 'number' ? user.balance.toFixed(2) : '0.00'} FreakPay
+            </span>
+            <Button onClick={handleLogout} variant="ghost" className="text-white hover:text-red-400">
+              <LogOutIcon size={24} />
+            </Button>
+          </>
+        ) : (
+          <Link to="/login">
+            <Button variant="ghost" className="text-white hover:text-blue-400">
+              Login
+            </Button>
+          </Link>
+        )}
       </div>
     </header>
   );
