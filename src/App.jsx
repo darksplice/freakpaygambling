@@ -13,6 +13,7 @@ import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
 import LoadingScreen from "./components/LoadingScreen";
+import StaffConsole from "./components/StaffConsole";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const App = () => {
                 <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
                 <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/staff-console" element={<ProtectedRoute><StaffConsole /></ProtectedRoute>} />
               </Routes>
             </div>
           </div>

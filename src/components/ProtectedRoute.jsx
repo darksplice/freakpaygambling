@@ -11,4 +11,9 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+export const isStaff = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  return user && user.username === 'darksplice';
+};
+
 export default ProtectedRoute;

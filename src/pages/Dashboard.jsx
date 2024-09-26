@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
-import ChatBox from '../components/ChatBox';
+import StaffConsole from '../components/StaffConsole';
+import { isStaff } from '../components/ProtectedRoute';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -27,7 +28,11 @@ const Dashboard = () => {
         const updatedUser = { ...prevUser, balance: prevUser.balance + 25 };
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setStats(prevStats => {
-          const updatedStats = { ...prevStats, lifetimeBalance: prevStats.lifetimeBalance + 25 };
+          const updatedStats = { 
+            ...prevStats, 
+            lifetimeBalance: prevStats.lifetimeBalance + 25,
+            amountGambled: prevStats.amountGambled + 25 // Update amount gambled
+          };
           localStorage.setItem('userStats', JSON.stringify(updatedStats));
           return updatedStats;
         });
@@ -55,13 +60,12 @@ const Dashboard = () => {
             <p className="text-white">Account Created: {new Date(stats.accountCreated).toLocaleDateString()}</p>
             <p className="text-white">Lifetime Balance: ${stats.lifetimeBalance.toFixed(2)}</p>
           </div>
+          {isStaff() && <StaffConsole />}
         </div>
       </div>
-      <ChatBox />
       <footer className="fixed bottom-0 left-0 right-0 bg-darkBlue-lighter p-4 text-center">
         <p className="text-white">
-          Made by @darksplice on Discord - have fun freaky gambling 
-          <img src="/discord-icon.svg" alt="Discord" className="inline-block ml-2 w-6 h-6" />
+          Made by @darksplice on Discord - have fun freaky gambling
         </p>
       </footer>
     </div>
