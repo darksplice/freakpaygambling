@@ -86,9 +86,9 @@ const Mines = () => {
   };
 
   return (
-    <div className="min-h-screen bg-darkBlue text-white">
-      <Header username={user.username} balance={user.balance} />
-      <div className="p-8 flex">
+    <div className="min-h-screen bg-darkBlue text-white flex flex-col">
+      <Header user={user} />
+      <div className="flex-1 p-8 flex">
         <div className="w-1/3 pr-4">
           <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
             <div className="mb-4">

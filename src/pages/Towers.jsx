@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import Header from '../components/Header';
-import ChatBox from '../components/ChatBox';
+
+const difficultySettings = {
+  easy: { levels: 4, successRate: 0.7, multiplier: 1.2 },
+  medium: { levels: 8, successRate: 0.5, multiplier: 1.5 },
+  hard: { levels: 12, successRate: 0.3, multiplier: 2 }
+};
 
 const Towers = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
@@ -9,9 +14,20 @@ const Towers = () => {
   const [currentLevel, setCurrentLevel] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [totalEarnings, setTotalEarnings] = useState(0);
-  const [towerState, setTowerState] = useState(Array(10).fill().map(() => Array(3).fill('default')));
+  const [difficulty, setDifficulty] = useState('medium');
+  const [towerState, setTowerState] = useState([]);
 
-  const levels = 10;
+  useEffect(() => {
+    initializeTower();
+  }, [difficulty]);
+
+  const initializeTower = () => {
+    const { levels } = difficultySettings[difficulty];
+    setTowerState(Array(levels).fill().map(() => Array(3).fill('default')));
+    setCurrentLevel(0);
+    setGameOver(false);
+    setTotalEarnings(0);
+  };
 
   const handleStart = () => {
     if (bet > user.balance) {
@@ -23,16 +39,13 @@ const Towers = () => {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       return updatedUser;
     });
-    setCurrentLevel(0);
-    setGameOver(false);
-    setTotalEarnings(0);
-    setTowerState(Array(10).fill().map(() => Array(3).fill('default')));
+    initializeTower();
   };
 
   const handleClimb = (level, choice) => {
     if (gameOver || level !== currentLevel) return;
 
-    const successRate = 0.5; // 50% win rate
+    const { successRate, multiplier } = difficultySettings[difficulty];
     const isSuccess = Math.random() < successRate;
 
     const newTowerState = [...towerState];
@@ -43,7 +56,7 @@ const Towers = () => {
       setCurrentLevel(prev => prev + 1);
       const newEarnings = calculateEarnings(currentLevel + 1);
       setTotalEarnings(newEarnings);
-      if (currentLevel + 1 === levels) {
+      if (currentLevel + 1 === difficultySettings[difficulty].levels) {
         handleWin();
       }
     } else {
@@ -52,7 +65,8 @@ const Towers = () => {
   };
 
   const calculateEarnings = (level) => {
-    return bet * (1 + (level * 0.5));
+    const { multiplier } = difficultySettings[difficulty];
+    return bet * (1 + (level * multiplier));
   };
 
   const handleCashOut = () => {
@@ -74,63 +88,74 @@ const Towers = () => {
   };
 
   return (
-    <div className="min-h-screen bg-darkBlue text-white flex">
-      <div className="flex-1 p-8">
-        <Header username={user.username} balance={user.balance} />
-        <div className="mt-8 flex">
-          <div className="w-1/3 pr-4">
-            <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
-              <div className="mb-4">
-                <label className="block mb-2">Bet amount</label>
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    value={bet}
-                    onChange={(e) => setBet(Number(e.target.value))}
-                    className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
-                  />
-                  <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
-                  <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
-                  <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
-                </div>
-              </div>
-              <div className="mb-4">
-                <label className="block mb-2">Total earnings</label>
-                <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
-              </div>
-              <Button onClick={handleStart} className="w-full bg-blue-500">Start new game</Button>
-              {!gameOver && currentLevel > 0 && (
-                <Button onClick={handleCashOut} className="w-full bg-green-500 mt-2">Cash Out</Button>
-              )}
-            </div>
-          </div>
-          <div className="w-2/3">
-            <div className="bg-darkBlue-lighter rounded-lg p-6">
-              <div className="flex flex-col-reverse">
-                {towerState.map((row, level) => (
-                  <div key={level} className="flex justify-between mb-2">
-                    {row.map((state, choice) => (
-                      <Button
-                        key={choice}
-                        onClick={() => handleClimb(level, choice)}
-                        disabled={gameOver || level !== currentLevel}
-                        className={`w-24 h-12 ${
-                          state === 'success' ? 'bg-green-500' :
-                          state === 'failure' ? 'bg-red-500' :
-                          'bg-blue-300'
-                        }`}
-                      >
-                        {state === 'default' ? `$${calculateEarnings(level).toFixed(2)}` : ''}
-                      </Button>
-                    ))}
-                  </div>
+    <div className="min-h-screen bg-darkBlue text-white flex flex-col">
+      <Header user={user} />
+      <div className="flex-1 p-8 flex">
+        <div className="w-1/3 pr-4">
+          <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
+            <div className="mb-4">
+              <label className="block mb-2">Difficulty</label>
+              <div className="flex justify-between">
+                {Object.keys(difficultySettings).map((diff) => (
+                  <Button
+                    key={diff}
+                    onClick={() => setDifficulty(diff)}
+                    className={`${difficulty === diff ? 'bg-blue-500' : 'bg-gray-500'}`}
+                  >
+                    {diff.charAt(0).toUpperCase() + diff.slice(1)}
+                  </Button>
                 ))}
               </div>
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">Bet amount</label>
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  value={bet}
+                  onChange={(e) => setBet(Number(e.target.value))}
+                  className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
+                />
+                <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
+                <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
+                <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
+              </div>
+            </div>
+            <div className="mb-4">
+              <label className="block mb-2">Total earnings</label>
+              <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
+            </div>
+            <Button onClick={handleStart} className="w-full bg-blue-500">Start new game</Button>
+            {!gameOver && currentLevel > 0 && (
+              <Button onClick={handleCashOut} className="w-full bg-green-500 mt-2">Cash Out</Button>
+            )}
+          </div>
+        </div>
+        <div className="w-2/3">
+          <div className="bg-darkBlue-lighter rounded-lg p-6">
+            <div className="flex flex-col-reverse">
+              {towerState.map((row, level) => (
+                <div key={level} className="flex justify-between mb-2">
+                  {row.map((state, choice) => (
+                    <Button
+                      key={choice}
+                      onClick={() => handleClimb(level, choice)}
+                      disabled={gameOver || level !== currentLevel}
+                      className={`w-24 h-12 ${
+                        state === 'success' ? 'bg-green-500' :
+                        state === 'failure' ? 'bg-red-500' :
+                        'bg-blue-300'
+                      }`}
+                    >
+                      {state === 'default' ? `$${calculateEarnings(level).toFixed(2)}` : ''}
+                    </Button>
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
-      <ChatBox />
     </div>
   );
 };
