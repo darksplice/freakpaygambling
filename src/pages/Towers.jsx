@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import Header from '../components/Header';
 
 const difficultySettings = {
   easy: { levels: 4, successRate: 0.7, multiplier: 1.2 },
@@ -89,7 +88,6 @@ const Towers = () => {
 
   return (
     <div className="min-h-screen bg-darkBlue text-white flex flex-col">
-      <Header user={user} />
       <div className="flex-1 p-8 flex">
         <div className="w-1/3 pr-4">
           <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">

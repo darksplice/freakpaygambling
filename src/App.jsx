@@ -30,6 +30,23 @@ const App = () => {
     setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      const interval = setInterval(() => {
+        setUser(prevUser => {
+          const updatedUser = {
+            ...prevUser,
+            balance: prevUser.balance + 1
+          };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
+          return updatedUser;
+        });
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
   if (isLoading) {
     return <LoadingScreen />;
   }
