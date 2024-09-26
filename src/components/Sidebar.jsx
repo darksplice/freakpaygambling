@@ -4,7 +4,7 @@ import { RocketIcon, CastleIcon, AnchorIcon, SettingsIcon } from 'lucide-react';
 
 const Sidebar = () => {
   return (
-    <div className="w-16 bg-darkBlue-lighter flex flex-col items-center py-4 space-y-6">
+    <div className="w-16 bg-darkBlue-lighter flex flex-col items-center py-4 space-y-6 rounded-r-lg mt-16">
       <Link to="/crash" className="text-white hover:text-blue-400">
         <RocketIcon size={24} />
       </Link>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronRightIcon, ChevronLeftIcon } from 'lucide-react';
@@ -9,6 +9,13 @@ const ChatBox = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const [isHidden, setIsHidden] = useState(false);
   const [onlineUsers] = useState(Math.floor(Math.random() * 100) + 50); // Random number between 50 and 150
+  const chatContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -23,17 +30,17 @@ const ChatBox = () => {
   };
 
   return (
-    <div className={`fixed right-0 top-0 bottom-0 bg-darkBlue-lighter p-4 overflow-hidden flex flex-col transition-all duration-300 ease-in-out ${isHidden ? 'w-12' : 'w-1/4'}`}>
+    <div className={`fixed right-0 top-16 bottom-0 bg-darkBlue-lighter p-4 overflow-hidden flex flex-col transition-all duration-300 ease-in-out ${isHidden ? 'w-12' : 'w-1/4'} rounded-l-lg`}>
       <Button 
         onClick={() => setIsHidden(!isHidden)} 
-        className="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-darkBlue-lighter"
+        className="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-darkBlue-lighter rounded-full"
       >
         {isHidden ? <ChevronLeftIcon /> : <ChevronRightIcon />}
       </Button>
       {!isHidden && (
         <>
           <h2 className="text-xl font-bold mb-4 text-white">Chat ({onlineUsers} online)</h2>
-          <div className="flex-grow overflow-y-auto mb-4">
+          <div ref={chatContainerRef} className="flex-grow overflow-y-auto mb-4">
             {messages.map((msg, index) => (
               <div key={index} className="mb-2 text-white">
                 <span className="font-bold">{msg.username}: </span>

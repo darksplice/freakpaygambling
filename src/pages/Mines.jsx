@@ -45,13 +45,14 @@ const Mines = () => {
     if (gameOver || grid[index] !== 'safe') return;
 
     const newGrid = [...grid];
-    newGrid[index] = grid[index] === 'mine' ? 'revealed-mine' : 'revealed';
-    setGrid(newGrid);
-    setRevealedCount(prev => prev + 1);
-
     if (grid[index] === 'mine') {
+      newGrid[index] = 'revealed-mine';
+      setGrid(newGrid);
       handleLoss();
     } else {
+      newGrid[index] = 'revealed';
+      setGrid(newGrid);
+      setRevealedCount(prev => prev + 1);
       const newEarnings = calculateEarnings(revealedCount + 1);
       setTotalEarnings(newEarnings);
       if (revealedCount + 1 === 25 - mineCount) {
@@ -81,7 +82,7 @@ const Mines = () => {
     setGameOver(true);
     setTotalEarnings(0);
     // Reveal all mines
-    const newGrid = grid.map(cell => cell === 'mine' ? 'revealed-mine' : cell === 'safe' ? 'revealed' : cell);
+    const newGrid = grid.map(cell => cell === 'mine' ? 'revealed-mine' : cell);
     setGrid(newGrid);
   };
 
@@ -153,11 +154,6 @@ const Mines = () => {
         </div>
       </div>
       <ChatBox />
-      <footer className="fixed bottom-0 left-0 right-0 bg-darkBlue-lighter p-4 text-center">
-        <p className="text-white">
-          Made by @darksplice on Discord - have fun freaky gambling
-        </p>
-      </footer>
     </div>
   );
 };

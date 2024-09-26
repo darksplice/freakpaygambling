@@ -15,6 +15,7 @@ const Crash = () => {
   const [joinTimer, setJoinTimer] = useState(10);
   const [gameState, setGameState] = useState('waiting'); // 'waiting', 'joining', 'playing', 'crashed'
   const canvasRef = useRef(null);
+  const [otherPlayers, setOtherPlayers] = useState([]);
 
   useEffect(() => {
     let interval;
@@ -120,6 +121,7 @@ const Crash = () => {
     setMultiplier(1);
     setTotalEarnings(0);
     setLeaderboard([]);
+    simulateOtherPlayers();
   };
 
   const handleCashOut = () => {
@@ -138,6 +140,14 @@ const Crash = () => {
   const updateLeaderboard = () => {
     const newEntry = { username: user.username, bet, cashout: totalEarnings };
     setLeaderboard(prev => [...prev, newEntry].sort((a, b) => b.cashout - a.cashout).slice(0, 5));
+  };
+
+  const simulateOtherPlayers = () => {
+    const newPlayers = Array(Math.floor(Math.random() * 5) + 3).fill().map(() => ({
+      username: `Player${Math.floor(Math.random() * 1000)}`,
+      bet: Math.floor(Math.random() * 1000) + 10,
+    }));
+    setOtherPlayers(newPlayers);
   };
 
   return (
@@ -203,8 +213,17 @@ const Crash = () => {
               <p>Current payout</p>
             </div>
           </div>
+          <div className="mt-4 bg-darkBlue-lighter rounded-lg p-6">
+            <h2 className="text-xl font-bold mb-4">Other Players</h2>
+            {otherPlayers.map((player, index) => (
+              <div key={index} className="mb-2">
+                <span>{player.username}: ${player.bet}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+      <ChatBox />
     </div>
   );
 };

@@ -10,7 +10,7 @@ const Header = ({ username, balance }) => {
   };
 
   return (
-    <header className="bg-darkBlue-lighter p-4 flex justify-between items-center">
+    <header className="bg-darkBlue-lighter p-4 flex justify-between items-center rounded-b-lg">
       <Link to="/" className="flex items-center">
         <span className="text-3xl mr-2">👅</span>
         <h1 className="text-white text-xl font-bold">𝓯𝓻𝓮𝓪𝓴𝓮𝓭𝓖𝓪𝓶𝓫𝓵𝓮</h1>

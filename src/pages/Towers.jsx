@@ -32,7 +32,7 @@ const Towers = () => {
   const handleClimb = (level, choice) => {
     if (gameOver || level !== currentLevel) return;
 
-    const successRate = 0.487; // 48.7% win rate
+    const successRate = 0.5; // 50% win rate
     const isSuccess = Math.random() < successRate;
 
     const newTowerState = [...towerState];
@@ -131,11 +131,6 @@ const Towers = () => {
         </div>
       </div>
       <ChatBox />
-      <footer className="fixed bottom-0 left-0 right-0 bg-darkBlue-lighter p-4 text-center">
-        <p className="text-white">
-          Made by @darksplice on Discord - have fun freaky gambling
-        </p>
-      </footer>
     </div>
   );
 };
