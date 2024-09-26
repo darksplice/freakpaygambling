@@ -10,8 +10,8 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
-    const user = existingUsers.find(u => u.username === username);
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const user = users.find(u => u.username === username && u.password === password);
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
       navigate('/');

@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Crash from "./pages/Crash";
 import Towers from "./pages/Towers";
 import Mines from "./pages/Mines";
+import Plinko from "./pages/Plinko";
 import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
@@ -49,6 +50,7 @@ const App = () => {
                     <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
                     <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
                     <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
+                    <Route path="/plinko" element={<ProtectedRoute><Plinko /></ProtectedRoute>} />
                     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                   </Routes>
                 </div>

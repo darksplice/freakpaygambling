@@ -15,7 +15,7 @@ const Signup = () => {
       alert('Username already taken. Please choose a different one.');
       return;
     }
-    const newUser = { username, balance: 0, amountGambled: 0, accountCreated: new Date().toISOString(), lifetimeBalance: 0 };
+    const newUser = { username, password, balance: 1000 };
     existingUsers.push(newUser);
     localStorage.setItem('users', JSON.stringify(existingUsers));
     localStorage.setItem('user', JSON.stringify(newUser));

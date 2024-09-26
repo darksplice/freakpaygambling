@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { RocketIcon, BoxIcon, AnchorIcon, CastleIcon, CupSodaIcon, CircleDotIcon } from 'lucide-react';
+import { RocketIcon, AnchorIcon, CastleIcon, CircleDotIcon } from 'lucide-react';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -9,10 +9,8 @@ const Sidebar = () => {
 
   const sidebarItems = [
     { icon: RocketIcon, path: '/crash', label: 'Crash' },
-    { icon: BoxIcon, path: '/cases', label: 'Cases' },
     { icon: AnchorIcon, path: '/mines', label: 'Mines' },
     { icon: CastleIcon, path: '/towers', label: 'Towers' },
-    { icon: CupSodaIcon, path: '/cups', label: 'Cups' },
     { icon: CircleDotIcon, path: '/plinko', label: 'Plinko' },
   ];
 
