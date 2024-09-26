@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { RocketIcon, BoxIcon, AnchorIcon, CastleIcon, CupSodaIcon, CircleDotIcon, HeadphonesIcon, MessageSquareIcon } from 'lucide-react';
+import { RocketIcon, BoxIcon, AnchorIcon, CastleIcon, CupSodaIcon, CircleDotIcon } from 'lucide-react';
 import { isStaff } from './ProtectedRoute';
 
 const Sidebar = () => {
@@ -25,12 +25,6 @@ const Sidebar = () => {
         <CircleDotIcon size={24} />
       </Link>
       <div className="flex-grow"></div>
-      <Link to="/music" className="text-white hover:text-blue-400">
-        <HeadphonesIcon size={24} />
-      </Link>
-      <Link to="/chat" className="text-white hover:text-blue-400">
-        <MessageSquareIcon size={24} />
-      </Link>
       {isStaff() && (
         <Link to="/staff-console" className="text-white hover:text-blue-400">
           <span className="text-xs">Staff</span>
