@@ -8,7 +8,6 @@ const Towers = () => {
   const [bet, setBet] = useState(30);
   const [currentLevel, setCurrentLevel] = useState(0);
   const [gameOver, setGameOver] = useState(false);
-  const [difficulty, setDifficulty] = useState('Normal');
   const [totalEarnings, setTotalEarnings] = useState(0);
   const [towerState, setTowerState] = useState(Array(10).fill().map(() => Array(3).fill('default')));
 
@@ -134,8 +133,7 @@ const Towers = () => {
       <ChatBox />
       <footer className="fixed bottom-0 left-0 right-0 bg-darkBlue-lighter p-4 text-center">
         <p className="text-white">
-          Made by @darksplice on Discord - have fun freaky gambling 
-          <img src="/discord-icon.svg" alt="Discord" className="inline-block ml-2 w-6 h-6" />
+          Made by @darksplice on Discord - have fun freaky gambling
         </p>
       </footer>
     </div>

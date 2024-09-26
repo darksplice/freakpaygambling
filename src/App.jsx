@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -11,31 +12,51 @@ import Mines from "./pages/Mines";
 import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
+import LoadingScreen from "./components/LoadingScreen";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <BrowserRouter>
-        <div className="flex min-h-screen bg-darkBlue">
-          <Sidebar />
-          <div className="flex-1">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
-              <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
-              <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-            </Routes>
+const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 8000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />;
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <BrowserRouter>
+          <div className="flex min-h-screen bg-darkBlue">
+            <div className="fixed left-0 top-0 bottom-0 z-10">
+              <Sidebar />
+            </div>
+            <div className="flex-1 ml-16">
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
+                <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
+                <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              </Routes>
+            </div>
           </div>
-        </div>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
