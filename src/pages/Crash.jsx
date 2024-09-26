@@ -16,6 +16,16 @@ const Crash = () => {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
+    const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const activePlayers = storedUsers.filter(u => u.username !== user.username).slice(0, 10);
+    setPlayers(activePlayers.map(p => ({
+      username: p.username,
+      bet: Math.floor(Math.random() * 1000) + 10,
+      multiplier: 1,
+    })));
+  }, [user.username]);
+
+  useEffect(() => {
     let interval;
     if (gameState === 'playing') {
       interval = setInterval(() => {
@@ -105,7 +115,7 @@ const Crash = () => {
     setIsCrashed(false);
     setMultiplier(1);
     setTotalEarnings(0);
-    simulatePlayers();
+    updatePlayerBets();
   };
 
   const handleCashOut = () => {
@@ -118,15 +128,20 @@ const Crash = () => {
     });
     setTotalEarnings(winnings);
     setGameState('waiting');
+    updateAmountGambled(bet);
   };
 
-  const simulatePlayers = () => {
-    const newPlayers = Array(Math.floor(Math.random() * 15) + 5).fill().map(() => ({
-      username: `Player${Math.floor(Math.random() * 1000)}`,
-      bet: Math.floor(Math.random() * 1000) + 10,
-      multiplier: (Math.random() * 2 + 1).toFixed(2),
-    }));
-    setPlayers(newPlayers);
+  const updatePlayerBets = () => {
+    setPlayers(prev => prev.map(player => ({
+      ...player,
+      multiplier: player.multiplier * (Math.random() * 0.5 + 1),
+    })));
+  };
+
+  const updateAmountGambled = (amount) => {
+    const stats = JSON.parse(localStorage.getItem('userStats')) || {};
+    stats.amountGambled = (stats.amountGambled || 0) + amount;
+    localStorage.setItem('userStats', JSON.stringify(stats));
   };
 
   return (

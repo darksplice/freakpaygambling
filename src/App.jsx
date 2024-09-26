@@ -15,12 +15,14 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import LoadingScreen from "./components/LoadingScreen";
+import Footer from "./components/Footer";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [timeOnSite, setTimeOnSite] = useState(0);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -32,20 +34,38 @@ const App = () => {
 
   useEffect(() => {
     if (user) {
-      const interval = setInterval(() => {
+      const moneyInterval = setInterval(() => {
         setUser(prevUser => {
           const updatedUser = {
             ...prevUser,
-            balance: prevUser.balance + 1
+            balance: prevUser.balance + (prevUser.moneyPerSecond || 1/3)
           };
           localStorage.setItem('user', JSON.stringify(updatedUser));
           return updatedUser;
         });
-      }, 3000);
+      }, 1000);
 
-      return () => clearInterval(interval);
+      const timeInterval = setInterval(() => {
+        setTimeOnSite(prevTime => prevTime + 1);
+      }, 1000);
+
+      return () => {
+        clearInterval(moneyInterval);
+        clearInterval(timeInterval);
+      };
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user && timeOnSite % 60 === 0) {
+      const updatedUser = {
+        ...user,
+        timeOnSite: (user.timeOnSite || 0) + 1
+      };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    }
+  }, [timeOnSite, user]);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -55,7 +75,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <BrowserRouter>
+        <BrowserRouter basename="/freakpay-gambleverse">
           <div className="flex h-screen bg-[#1a1b2e]">
             {user && <Sidebar />}
             <div className="flex flex-col flex-1">
@@ -72,6 +92,7 @@ const App = () => {
                   <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 </Routes>
               </div>
+              <Footer />
             </div>
           </div>
         </BrowserRouter>

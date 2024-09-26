@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import Leaderboard from '../components/Leaderboard';
+import UpgradeSystem from '../components/UpgradeSystem';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
@@ -8,6 +10,7 @@ const Dashboard = () => {
     amountGambled: 0,
     accountCreated: '',
     lifetimeBalance: 0,
+    timeOnSite: 0,
   });
 
   useEffect(() => {
@@ -18,6 +21,7 @@ const Dashboard = () => {
         amountGambled: 0,
         accountCreated: new Date().toISOString(),
         lifetimeBalance: storedUser.balance,
+        timeOnSite: 0,
       };
       setStats(storedStats);
     }
@@ -38,6 +42,7 @@ const Dashboard = () => {
           <p>Amount Gambled: ${stats.amountGambled.toFixed(2)}</p>
           <p>Account Created: {new Date(stats.accountCreated).toLocaleDateString()}</p>
           <p>Lifetime Balance: ${stats.lifetimeBalance.toFixed(2)}</p>
+          <p>Time on Site: {Math.floor(stats.timeOnSite / 60)} minutes</p>
         </div>
         <div className="bg-[#252640] rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold mb-4">Quick Links</h2>
@@ -54,6 +59,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <UpgradeSystem user={user} setUser={setUser} />
+      <Leaderboard />
     </div>
   );
 };
