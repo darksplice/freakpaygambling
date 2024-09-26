@@ -1,35 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { RocketIcon, BoxIcon, AnchorIcon, CastleIcon, CupSodaIcon, CircleDotIcon } from 'lucide-react';
-import { isStaff } from './ProtectedRoute';
 
 const Sidebar = () => {
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
+
+  const sidebarItems = [
+    { icon: RocketIcon, path: '/crash', label: 'Crash' },
+    { icon: BoxIcon, path: '/cases', label: 'Cases' },
+    { icon: AnchorIcon, path: '/mines', label: 'Mines' },
+    { icon: CastleIcon, path: '/towers', label: 'Towers' },
+    { icon: CupSodaIcon, path: '/cups', label: 'Cups' },
+    { icon: CircleDotIcon, path: '/plinko', label: 'Plinko' },
+  ];
+
   return (
-    <div className="w-16 bg-darkBlue-lighter flex flex-col items-center py-4 space-y-6 rounded-r-lg mt-24">
-      <Link to="/crash" className="text-white hover:text-blue-400">
-        <RocketIcon size={24} />
-      </Link>
-      <Link to="/cases" className="text-white hover:text-blue-400">
-        <BoxIcon size={24} />
-      </Link>
-      <Link to="/mines" className="text-white hover:text-blue-400">
-        <AnchorIcon size={24} />
-      </Link>
-      <Link to="/towers" className="text-white hover:text-blue-400">
-        <CastleIcon size={24} />
-      </Link>
-      <Link to="/cups" className="text-white hover:text-blue-400">
-        <CupSodaIcon size={24} />
-      </Link>
-      <Link to="/plinko" className="text-white hover:text-blue-400">
-        <CircleDotIcon size={24} />
-      </Link>
-      <div className="flex-grow"></div>
-      {isStaff() && (
-        <Link to="/staff-console" className="text-white hover:text-blue-400">
-          <span className="text-xs">Staff</span>
+    <div className="w-16 bg-[#252640] flex flex-col items-center py-4 space-y-6">
+      {sidebarItems.map(({ icon: Icon, path, label }) => (
+        <Link
+          key={path}
+          to={path}
+          className={`text-white hover:text-blue-400 ${isActive(path) ? 'text-blue-400' : ''}`}
+          title={label}
+        >
+          <Icon size={24} />
         </Link>
-      )}
+      ))}
     </div>
   );
 };

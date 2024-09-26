@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import Header from '../components/Header';
-import LeaderboardItem from '../components/LeaderboardItem';
+import { Input } from "@/components/ui/input";
+import LiveFeed from '../components/LiveFeed';
 
 const Crash = () => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
@@ -11,32 +11,18 @@ const Crash = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [autoCashout, setAutoCashout] = useState(null);
   const [totalEarnings, setTotalEarnings] = useState(0);
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [joinTimer, setJoinTimer] = useState(10);
-  const [gameState, setGameState] = useState('waiting'); // 'waiting', 'joining', 'playing', 'crashed'
+  const [gameState, setGameState] = useState('waiting');
   const canvasRef = useRef(null);
-  const [otherPlayers, setOtherPlayers] = useState([]);
+  const [players, setPlayers] = useState([]);
 
   useEffect(() => {
     let interval;
-    if (gameState === 'joining') {
-      interval = setInterval(() => {
-        setJoinTimer(prev => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            setGameState('playing');
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else if (gameState === 'playing') {
+    if (gameState === 'playing') {
       interval = setInterval(() => {
         if (Math.random() < 0.02) {
           setIsCrashed(true);
           setGameState('crashed');
           clearInterval(interval);
-          updateLeaderboard();
         } else {
           setMultiplier(prev => {
             const newMultiplier = prev + 0.01;
@@ -115,13 +101,11 @@ const Crash = () => {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       return updatedUser;
     });
-    setGameState('joining');
-    setJoinTimer(10);
+    setGameState('playing');
     setIsCrashed(false);
     setMultiplier(1);
     setTotalEarnings(0);
-    setLeaderboard([]);
-    simulateOtherPlayers();
+    simulatePlayers();
   };
 
   const handleCashOut = () => {
@@ -134,93 +118,72 @@ const Crash = () => {
     });
     setTotalEarnings(winnings);
     setGameState('waiting');
-    updateLeaderboard();
   };
 
-  const updateLeaderboard = () => {
-    const newEntry = { username: user.username, bet, cashout: totalEarnings };
-    setLeaderboard(prev => [...prev, newEntry].sort((a, b) => b.cashout - a.cashout).slice(0, 5));
-  };
-
-  const simulateOtherPlayers = () => {
-    const newPlayers = Array(Math.floor(Math.random() * 5) + 3).fill().map(() => ({
+  const simulatePlayers = () => {
+    const newPlayers = Array(Math.floor(Math.random() * 15) + 5).fill().map(() => ({
       username: `Player${Math.floor(Math.random() * 1000)}`,
       bet: Math.floor(Math.random() * 1000) + 10,
+      multiplier: (Math.random() * 2 + 1).toFixed(2),
     }));
-    setOtherPlayers(newPlayers);
+    setPlayers(newPlayers);
   };
 
   return (
-    <div className="min-h-screen bg-darkBlue text-white">
-      <Header username={user.username} balance={user.balance} />
-      <div className="p-8 flex">
-        <div className="w-1/3 pr-4">
-          <div className="bg-darkBlue-lighter rounded-lg p-6 mb-8">
-            <div className="mb-4">
-              <label className="block mb-2">Bet amount</label>
-              <div className="flex items-center">
-                <input
-                  type="number"
-                  value={bet}
-                  onChange={(e) => setBet(Number(e.target.value))}
-                  className="bg-darkBlue text-white p-2 rounded mr-2 w-full"
-                />
-                <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
-                <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
-                <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
+    <div className="flex h-full bg-[#1a1b2e] text-white p-4">
+      <div className="w-2/3 pr-4">
+        <div className="bg-[#252640] rounded-lg p-6 mb-4">
+          <canvas ref={canvasRef} width={600} height={400} className="w-full h-64 mb-4" />
+          <div className="flex justify-between">
+            {[1.27, 1.39, 1.37, 1.32, 2, 2.45, 1.54].map((mult, index) => (
+              <div key={index} className="px-3 py-1 rounded bg-blue-500">
+                {mult.toFixed(2)}x
               </div>
-            </div>
-            <div className="mb-4">
-              <label className="block mb-2">Auto cashout (multiplier)</label>
-              <input
-                type="number"
-                value={autoCashout || ''}
-                onChange={(e) => setAutoCashout(Number(e.target.value) || null)}
-                className="bg-darkBlue text-white p-2 rounded w-full"
-                placeholder="Disable"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block mb-2">Total earnings</label>
-              <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
-            </div>
-            <Button onClick={handleBet} disabled={gameState !== 'waiting'} className="w-full bg-blue-500 mb-2">
-              {gameState === 'joining' ? `Joining in ${joinTimer}s` : 'Place Bet'}
-            </Button>
-            <Button onClick={handleCashOut} disabled={gameState !== 'playing'} className="w-full bg-green-500">
-              Cash Out
-            </Button>
-          </div>
-          <div className="bg-darkBlue-lighter rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">Leaderboard</h2>
-            {leaderboard.map((entry, index) => (
-              <LeaderboardItem key={index} {...entry} />
             ))}
+          </div>
+          <div className="mt-4 text-center">
+            <h2 className="text-4xl font-bold mb-2">{multiplier.toFixed(2)}x</h2>
+            <p>Current payout</p>
           </div>
         </div>
-        <div className="w-2/3">
-          <div className="bg-darkBlue-lighter rounded-lg p-6">
-            <canvas ref={canvasRef} width={600} height={400} className="w-full h-64 mb-4" />
-            <div className="flex justify-between">
-              {[1.23, 1.46, 2.01, 2.2, 3.61, 4.78, 5.93].map((mult, index) => (
-                <div key={index} className={`px-3 py-1 rounded ${mult > 3 ? 'bg-yellow-500' : 'bg-blue-500'}`}>
-                  {mult.toFixed(2)}x
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 text-center">
-              <h2 className="text-4xl font-bold mb-2">{multiplier.toFixed(2)}x</h2>
-              <p>Current payout</p>
+        <LiveFeed players={players} />
+      </div>
+      <div className="w-1/3">
+        <div className="bg-[#252640] rounded-lg p-6 mb-4">
+          <div className="mb-4">
+            <label className="block mb-2">Bet amount</label>
+            <div className="flex items-center">
+              <Input
+                type="number"
+                value={bet}
+                onChange={(e) => setBet(Number(e.target.value))}
+                className="bg-[#1a1b2e] text-white mr-2"
+              />
+              <Button onClick={() => setBet(bet / 2)} className="px-2 py-1">1/2</Button>
+              <Button onClick={() => setBet(bet * 2)} className="px-2 py-1 ml-2">2x</Button>
+              <Button onClick={() => setBet(user.balance)} className="px-2 py-1 ml-2">Max</Button>
             </div>
           </div>
-          <div className="mt-4 bg-darkBlue-lighter rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">Other Players</h2>
-            {otherPlayers.map((player, index) => (
-              <div key={index} className="mb-2">
-                <span>{player.username}: ${player.bet}</span>
-              </div>
-            ))}
+          <div className="mb-4">
+            <label className="block mb-2">Auto cashout (multiplier)</label>
+            <Input
+              type="number"
+              value={autoCashout || ''}
+              onChange={(e) => setAutoCashout(Number(e.target.value) || null)}
+              className="bg-[#1a1b2e] text-white w-full"
+              placeholder="Disable"
+            />
           </div>
+          <div className="mb-4">
+            <label className="block mb-2">Total earnings</label>
+            <p className="text-2xl font-bold">${totalEarnings.toFixed(2)}</p>
+          </div>
+          <Button onClick={handleBet} disabled={gameState !== 'waiting'} className="w-full bg-blue-500 mb-2">
+            {gameState === 'waiting' ? 'Place Bet' : 'Waiting for next round'}
+          </Button>
+          <Button onClick={handleCashOut} disabled={gameState !== 'playing'} className="w-full bg-green-500">
+            Cash Out
+          </Button>
         </div>
       </div>
     </div>

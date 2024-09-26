@@ -12,25 +12,25 @@ import Mines from "./pages/Mines";
 import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Sidebar from "./components/Sidebar";
+import Header from "./components/Header";
 import LoadingScreen from "./components/LoadingScreen";
-import StaffConsole from "./components/StaffConsole";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 8000);
-
-    return () => clearTimeout(timer);
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+    setIsLoading(false);
   }, []);
 
   if (isLoading) {
-    return <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />;
+    return <LoadingScreen />;
   }
 
   return (
@@ -38,23 +38,29 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <BrowserRouter>
-          <div className="flex min-h-screen bg-darkBlue">
-            <div className="fixed left-0 top-0 bottom-0 z-10">
+          {user ? (
+            <div className="flex h-screen bg-[#1a1b2e]">
               <Sidebar />
+              <div className="flex flex-col flex-1">
+                <Header user={user} />
+                <div className="flex-1 overflow-auto">
+                  <Routes>
+                    <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                    <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
+                    <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
+                    <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
+                    <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                  </Routes>
+                </div>
+              </div>
             </div>
-            <div className="flex-1 ml-16">
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                <Route path="/crash" element={<ProtectedRoute><Crash /></ProtectedRoute>} />
-                <Route path="/towers" element={<ProtectedRoute><Towers /></ProtectedRoute>} />
-                <Route path="/mines" element={<ProtectedRoute><Mines /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/staff-console" element={<ProtectedRoute><StaffConsole /></ProtectedRoute>} />
-              </Routes>
-            </div>
-          </div>
+          ) : (
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="*" element={<Login />} />
+            </Routes>
+          )}
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
