@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { RocketIcon, BoxIcon, Dice, AnchorIcon, CastleIcon, CupSodaIcon, CircleDotIcon, HeadphonesIcon, MessageSquareIcon } from 'lucide-react';
+import { RocketIcon, BoxIcon, DiceIcon, AnchorIcon, CastleIcon, CupSodaIcon, CircleDotIcon, HeadphonesIcon, MessageSquareIcon } from 'lucide-react';
 import { isStaff } from './ProtectedRoute';
 
 const Sidebar = () => {
@@ -13,7 +13,7 @@ const Sidebar = () => {
         <BoxIcon size={24} />
       </Link>
       <Link to="/dice" className="text-white hover:text-blue-400">
-        <Dice size={24} />
+        <DiceIcon size={24} />
       </Link>
       <Link to="/mines" className="text-white hover:text-blue-400">
         <AnchorIcon size={24} />
