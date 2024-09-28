@@ -75,7 +75,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <BrowserRouter basename="/freakpay-gambleverse">
+        <BrowserRouter>
           <div className="flex h-screen bg-[#1a1b2e]">
             {user && <Sidebar />}
             <div className="flex flex-col flex-1">
